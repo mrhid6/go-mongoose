@@ -3,10 +3,11 @@ package test
 import (
 	"fmt"
 
+	"go-mongoose/mongoose"
+	"go-mongoose/mutility"
+	test "go-mongoose/test/models"
+
 	"github.com/gin-gonic/gin"
-	"github.com/rahul-sinha1908/go-mongoose/mongoose"
-	"github.com/rahul-sinha1908/go-mongoose/mutility"
-	test "github.com/rahul-sinha1908/go-mongoose/test/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

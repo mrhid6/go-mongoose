@@ -1,4 +1,4 @@
-module github.com/rahul-sinha1908/go-mongoose
+module go-mongoose
 
 go 1.14
 

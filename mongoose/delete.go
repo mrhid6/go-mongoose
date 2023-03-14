@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/rahul-sinha1908/go-mongoose/mutility"
+	"go-mongoose/mutility"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
