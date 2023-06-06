@@ -3,7 +3,7 @@ package test
 import (
 	"fmt"
 
-	"go-mongoose/mongoose"
+	"github.com/mrhid6/go-mongoose/mongoose"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

@@ -3,9 +3,9 @@ package test
 import (
 	"fmt"
 
-	"go-mongoose/mongoose"
-	"go-mongoose/mutility"
-	test "go-mongoose/test/models"
+	"github.com/mrhid6/go-mongoose/mongoose"
+	"github.com/mrhid6/go-mongoose/mutility"
+	test "github.com/mrhid6/go-mongoose/test/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"

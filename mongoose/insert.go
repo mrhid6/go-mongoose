@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	"go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/mutility"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )

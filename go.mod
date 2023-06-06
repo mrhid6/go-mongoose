@@ -1,4 +1,4 @@
-module go-mongoose
+module github.com/mrhid6/go-mongoose
 
 go 1.18
 

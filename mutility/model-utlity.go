@@ -16,7 +16,7 @@ func getName(t reflect.Type) string {
 	if t.Kind() == reflect.Slice || t.Kind() == reflect.Ptr || t.Kind() == reflect.Array || t.Kind() == reflect.Map || t.Kind() == reflect.Chan {
 		return getName(t.Elem())
 	}
-	return t.Name()
+	return strings.ToLower(t.Name());
 }
 
 //GetID Returns the Object ID

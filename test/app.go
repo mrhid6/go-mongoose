@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	test "go-mongoose/test/src"
+	test "github.com/mrhid6/go-mongoose/test/src"
 )
 
 func main() {
