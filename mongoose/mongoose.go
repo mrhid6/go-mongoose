@@ -2,7 +2,6 @@ package mongoose
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strconv"
 	"time"
@@ -11,14 +10,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//Mongo This is the Mongo struct
+// Mongo This is the Mongo struct
 type Mongo struct {
 	client   *mongo.Client
 	Database *mongo.Database
 	Err      error
 }
 
-//DBConnection DB Connection Details
+// DBConnection DB Connection Details
 type DBConnection struct {
 	Host     string
 	Port     int
@@ -36,9 +35,9 @@ type DBConnection struct {
 	SRV bool
 }
 
-//ShortWaitTime Small Wait time
-//MediumWaitTime Medium Wait Time
-//LongWaitTime Long wait time
+// ShortWaitTime Small Wait time
+// MediumWaitTime Medium Wait Time
+// LongWaitTime Long wait time
 var (
 	_mongo        Mongo
 	connectionURL string = "mongodb://localhost:27017"
@@ -49,7 +48,7 @@ var (
 	LongWaitTime   time.Duration = 10
 )
 
-//InitiateDB This needs to be called if you are using some other than default DB
+// InitiateDB This needs to be called if you are using some other than default DB
 func InitiateDB(dbConnection DBConnection) {
 	// fmt.Println(dbConnection.Port)
 	if dbConnection.Port == 0 {
@@ -76,17 +75,16 @@ func InitiateDB(dbConnection DBConnection) {
 	}
 }
 
-//Get This function will recieve the Mongo structure
-func Get() Mongo {
+// Get This function will recieve the Mongo structure
+func Get() (Mongo, error) {
 	if _mongo.client == nil {
 		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
-		if _mongo.Err == nil {
-			_mongo.Database = _mongo.client.Database(dbName)
-			fmt.Print("Database Created Successfully\n")
-		} else {
-			panic(_mongo.Err)
+		if _mongo.Err != nil {
+			return _mongo, _mongo.Err
 		}
+		
+		_mongo.Database = _mongo.client.Database(dbName)
 	}
-	return _mongo
+	return _mongo, nil
 }

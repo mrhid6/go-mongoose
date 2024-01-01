@@ -1,25 +1,37 @@
 package mutility
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//GetName Returns the collection Name
+func IsPointer(a interface{}) bool {
+	t := reflect.TypeOf(a)
+	return t.Kind() == reflect.Ptr
+}
+
+// GetName Returns the collection Name
 func GetName(a interface{}) string {
 	t := reflect.TypeOf(a)
+
+	if t.Kind() == reflect.String {
+		return fmt.Sprintf("%v", a)
+	}
+
 	return getName(t)
 }
 func getName(t reflect.Type) string {
 	if t.Kind() == reflect.Slice || t.Kind() == reflect.Ptr || t.Kind() == reflect.Array || t.Kind() == reflect.Map || t.Kind() == reflect.Chan {
 		return getName(t.Elem())
 	}
-	return strings.ToLower(t.Name());
+
+	return strings.ToLower(t.Name())
 }
 
-//GetID Returns the Object ID
+// GetID Returns the Object ID
 func GetID(a interface{}) primitive.ObjectID {
 	// t := reflect.TypeOf(a)
 	tv := reflect.ValueOf(a)
@@ -31,7 +43,7 @@ func GetID(a interface{}) primitive.ObjectID {
 	return aV
 }
 
-//CreateIndex This function would be used to create index for the table
+// CreateIndex This function would be used to create index for the table
 func CreateIndex(a interface{}) {
 	t := reflect.TypeOf(a)
 	t.Name()

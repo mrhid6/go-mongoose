@@ -6,67 +6,69 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/mrhid6/go-mongoose/mutility"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//PopulateObject an Object
-func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) {
-	t := reflect.TypeOf(objPtr)
-	if t.Kind() != reflect.Ptr {
-		panic("Model should be a Pointer")
+// PopulateObject an Object
+func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) error {
+
+	if mutility.IsPointer(objPtr) {
+		return errors.New("objptr should be a Pointer")
 	}
-	if reflect.TypeOf(modelPtr).Kind() != reflect.Ptr {
-		panic("Model should be a Pointer")
+	if mutility.IsPointer(modelPtr) {
+		return errors.New("modelPtr should be a Pointer")
 	}
 
+	t := reflect.TypeOf(objPtr)
 	val := reflect.ValueOf(objPtr).Elem().FieldByName(fieldName)
 
 	t = t.Elem()
 	f, b := t.FieldByName(fieldName)
-	if b == false {
-		return
+	if !b {
+		return fmt.Errorf("error populating object no field with %s", fieldName)
 	}
 
 	tags := strings.Split(f.Tag.Get("mson"), ",")
 	for i := range tags {
 		tag := strings.Split(tags[i], "=")
 		if len(tag) != 2 {
-			return
+			return nil
 		}
 		if tag[0] != "collection" {
-			return
+			return nil
 		}
 
 		t1 := val.Interface().(primitive.ObjectID)
 
 		err := FindByObjectID(t1, modelPtr)
 		if err != nil {
-			fmt.Println(err)
-			return
+			return err
 		}
-
-		// val.Set(reflect.ValueOf(modelPtr).Elem())
 	}
+
+	return nil
 }
 
-//PopulateObjectArray Populates the Object Array
-func PopulateObjectArray(obj interface{}, field string, modelArrPtr interface{}) error {
-	t := reflect.TypeOf(obj)
-	if t.Kind() != reflect.Ptr {
-		return errors.New("Object should be a Pointer")
+// PopulateObjectArray Populates the Object Array
+func PopulateObjectArray(objPtr interface{}, field string, modelArrPtr interface{}) error {
+
+	if mutility.IsPointer(objPtr) {
+		return errors.New("objptr should be a Pointer")
 	}
-	// fmt.Println("Type ", reflect.TypeOf(modelArrPtr).Elem().Elem().Name())
-	if reflect.TypeOf(modelArrPtr).Kind() != reflect.Ptr {
-		return errors.New("The Type need not to be pointer")
+	if mutility.IsPointer(modelArrPtr) {
+		return errors.New("modelarrptr should be a Pointer")
 	}
 
-	val := reflect.ValueOf(obj).Elem().FieldByName(field)
+	t := reflect.TypeOf(objPtr)
+
+	val := reflect.ValueOf(objPtr).Elem().FieldByName(field)
 
 	t = t.Elem()
 	f, b := t.FieldByName(field)
-	if b == false {
-		return errors.New("No Field")
+	if !b {
+		return fmt.Errorf("error populating array no field with %s", field)
 	}
 
 	tags := strings.Split(f.Tag.Get("mson"), ",")
@@ -80,18 +82,15 @@ func PopulateObjectArray(obj interface{}, field string, modelArrPtr interface{})
 		}
 
 		objIds := val.Interface().(primitive.A)
-		// fmt.Println("Object IDs ", objIds)
 		err := FindAll(bson.M{
 			"_id": bson.M{
 				"$in": objIds,
 			},
 		}, modelArrPtr)
-		// fmt.Println(modelArrPtr)
 
 		if err != nil {
 			return err
 		}
-		// val.Set(reflect.ValueOf(modelArrPtr).Elem())
 	}
 
 	return nil

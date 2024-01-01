@@ -11,10 +11,16 @@ import (
 
 // UpdateByID Updates by ID
 func UpdateByID(model interface{}) error {
-	collection := Get().Database.Collection(mutility.GetName(model))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(model))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
-	_, err := collection.ReplaceOne(ctx, bson.M{
+	_, err = collection.ReplaceOne(ctx, bson.M{
 		"_id": mutility.GetID(model),
 	}, model)
 
@@ -25,10 +31,17 @@ func UpdateByID(model interface{}) error {
 }
 
 func UpdateDataByID(model interface{}, update interface{}) error {
-	collection := Get().Database.Collection(mutility.GetName(model))
+
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(model))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
-	_, err := collection.UpdateOne(ctx, bson.M{
+	_, err = collection.UpdateOne(ctx, bson.M{
 		"_id": mutility.GetID(model),
 	}, update)
 

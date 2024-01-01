@@ -14,7 +14,13 @@ import (
 // FindOne Searches one object and returns its value
 func FindOne(filter bson.M, b interface{}) (err error) {
 	// fmt.Println("Collection Name : ", mutility.GetName(b))
-	collection := Get().Database.Collection(mutility.GetName(b))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(b))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	res := collection.FindOne(ctx, filter)
@@ -33,7 +39,13 @@ func FindOne(filter bson.M, b interface{}) (err error) {
 // FindByID Searches by ID
 func FindByID(id string, b interface{}) (err error) {
 	// fmt.Println("Collection Name : ", b.GetName())
-	collection := Get().Database.Collection(mutility.GetName(b))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(b))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	userID, err := primitive.ObjectIDFromHex(id)
@@ -56,8 +68,13 @@ func FindByID(id string, b interface{}) (err error) {
 
 // FindByObjectID Searches by Object ID
 func FindByObjectID(objectID primitive.ObjectID, bPtr interface{}) (err error) {
-	// fmt.Println("Collection Name : ", mutility.GetName(bPtr))
-	collection := Get().Database.Collection(mutility.GetName(bPtr))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(bPtr))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	res := collection.FindOne(ctx, bson.M{
@@ -75,7 +92,13 @@ func FindByObjectID(objectID primitive.ObjectID, bPtr interface{}) (err error) {
 }
 
 func findByObjectID(objectID primitive.ObjectID, collectionName string) (interface{}, error) {
-	collection := Get().Database.Collection(collectionName)
+	mongo, err := Get()
+
+	if err != nil {
+		return nil, err
+	}
+
+	collection := mongo.Database.Collection(collectionName)
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	res := collection.FindOne(ctx, bson.M{
@@ -85,7 +108,7 @@ func findByObjectID(objectID primitive.ObjectID, collectionName string) (interfa
 		return nil, res.Err()
 	}
 	var b interface{}
-	err := res.Decode(&b)
+	err = res.Decode(&b)
 	if err != nil {
 		return nil, err
 	}
@@ -95,8 +118,13 @@ func findByObjectID(objectID primitive.ObjectID, collectionName string) (interfa
 
 // FindAll Get All Docs
 func FindAll(filter bson.M, modelsOutArrayPtr interface{}) error {
-	// fmt.Println("Find All Name ", mutility.GetName(modelsOutArrayPtr))
-	collection := Get().Database.Collection(mutility.GetName(modelsOutArrayPtr))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(modelsOutArrayPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	cur, err := collection.Find(ctx, filter)
@@ -112,8 +140,13 @@ func FindAll(filter bson.M, modelsOutArrayPtr interface{}) error {
 
 // FindAllWithPagination Get All Docs with Pagination
 func FindAllWithPagination(filter bson.M, start int64, count int64, modelsOutArrayPtr interface{}) error {
-	// fmt.Println("Find All Name ", mutility.GetName(modelsOutArrayPtr))
-	collection := Get().Database.Collection(mutility.GetName(modelsOutArrayPtr))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(modelsOutArrayPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	cur, err := collection.Find(ctx, filter, &options.FindOptions{
@@ -130,10 +163,15 @@ func FindAllWithPagination(filter bson.M, start int64, count int64, modelsOutArr
 	return nil
 }
 
-//FindAllWithOptions Find all with options
+// FindAllWithOptions Find all with options
 func FindAllWithOptions(filter bson.M, option options.FindOptions, modelsOutArrayPtr interface{}) error {
-	// fmt.Println("Find All Name ", mutility.GetName(modelsOutArrayPtr))
-	collection := Get().Database.Collection(mutility.GetName(modelsOutArrayPtr))
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(modelsOutArrayPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	cur, err := collection.Find(ctx, filter, &option)

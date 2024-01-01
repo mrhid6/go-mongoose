@@ -10,19 +10,29 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//DeleteOne Deletes one Object
+// DeleteOne Deletes one Object
 func DeleteOne(filter bson.M, tempCollection interface{}) (*mongo.DeleteResult, error) {
-	// fmt.Println("Collection Name : ", b.GetName())
-	collection := Get().Database.Collection(mutility.GetName(tempCollection))
+	mongo, err := Get()
+
+	if err != nil {
+		return nil, err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(tempCollection))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	return collection.DeleteOne(ctx, filter)
 }
 
-//DeleteMany Deletes Many Objects
+// DeleteMany Deletes Many Objects
 func DeleteMany(filter bson.M, tempCollection interface{}) (*mongo.DeleteResult, error) {
-	// fmt.Println("Collection Name : ", b.GetName())
-	collection := Get().Database.Collection(mutility.GetName(tempCollection))
+	mongo, err := Get()
+
+	if err != nil {
+		return nil, err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(tempCollection))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	return collection.DeleteMany(ctx, filter)
