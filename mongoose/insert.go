@@ -14,8 +14,8 @@ import (
 // InsertOne This will insert just one Data
 func InsertOne(modelPtr interface{}) (res *mongo.InsertOneResult, err error) {
 
-	if mutility.IsPointer(modelPtr) {
-		return nil, errors.New("model should be a Pointer")
+	if !mutility.IsPointer(modelPtr) {
+		return nil, errors.New("insertone - model should be a Pointer")
 	}
 
 	mongo, err := Get()
@@ -44,7 +44,7 @@ func InsertMany(models []interface{}) (res *mongo.InsertManyResult, err error) {
 		return nil, errors.New("the length of Model Array is 0")
 	}
 
-	if mutility.IsPointer(models) {
+	if !mutility.IsPointer(models) {
 		return nil, errors.New("models should be a Pointer")
 	}
 

@@ -7,15 +7,14 @@ import (
 	"github.com/mrhid6/go-mongoose/mutility"
 	test "github.com/mrhid6/go-mongoose/test/models"
 
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//RunTest Run Some Minor tests
+// RunTest Run Some Minor tests
 func RunTest() {
 	//mongoose.
 	mongoose.InitiateDB(mongoose.DBConnection{
-		Database: "witfit",
+		Database: "test",
 		Host:     "localhost",
 		Port:     27017,
 		User:     "",
@@ -25,7 +24,9 @@ func RunTest() {
 	tM := test.UserModel{
 		Email: "Something@gmail.com",
 	}
-	mongoose.InsertOne(&tM)
+	if _, err := mongoose.InsertOne(&tM); err != nil {
+		panic(err)
+	}
 	fmt.Println("ID ", tM)
 	uM := test.UserModel{}
 	// allModels := make([]bson.M, 0)
@@ -58,7 +59,4 @@ func RunTest() {
 	// uM.Teams = append(uM.Teams, "")
 	// test := uM.PopulateTest()
 	uM.PopulateTeams()
-	fmt.Println(gin.H{
-		"user": uM,
-	})
 }

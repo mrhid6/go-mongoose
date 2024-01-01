@@ -14,11 +14,11 @@ import (
 // PopulateObject an Object
 func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) error {
 
-	if mutility.IsPointer(objPtr) {
-		return errors.New("objptr should be a Pointer")
+	if !mutility.IsPointer(objPtr) {
+		return errors.New("populateobject - objptr should be a Pointer")
 	}
-	if mutility.IsPointer(modelPtr) {
-		return errors.New("modelPtr should be a Pointer")
+	if !mutility.IsPointer(modelPtr) {
+		return errors.New("populateobject - modelPtr should be a Pointer")
 	}
 
 	t := reflect.TypeOf(objPtr)
@@ -27,7 +27,7 @@ func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) 
 	t = t.Elem()
 	f, b := t.FieldByName(fieldName)
 	if !b {
-		return fmt.Errorf("error populating object no field with %s", fieldName)
+		return fmt.Errorf("populateobject - error populating object no field with %s", fieldName)
 	}
 
 	tags := strings.Split(f.Tag.Get("mson"), ",")
@@ -54,11 +54,11 @@ func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) 
 // PopulateObjectArray Populates the Object Array
 func PopulateObjectArray(objPtr interface{}, field string, modelArrPtr interface{}) error {
 
-	if mutility.IsPointer(objPtr) {
-		return errors.New("objptr should be a Pointer")
+	if !mutility.IsPointer(objPtr) {
+		return errors.New("populateobjectarray - objptr should be a Pointer")
 	}
-	if mutility.IsPointer(modelArrPtr) {
-		return errors.New("modelarrptr should be a Pointer")
+	if !mutility.IsPointer(modelArrPtr) {
+		return errors.New("populateobjectarray - modelarrptr should be a Pointer")
 	}
 
 	t := reflect.TypeOf(objPtr)
@@ -68,7 +68,7 @@ func PopulateObjectArray(objPtr interface{}, field string, modelArrPtr interface
 	t = t.Elem()
 	f, b := t.FieldByName(field)
 	if !b {
-		return fmt.Errorf("error populating array no field with %s", field)
+		return fmt.Errorf("populateobjectarray - error populating array no field with %s", field)
 	}
 
 	tags := strings.Split(f.Tag.Get("mson"), ",")
