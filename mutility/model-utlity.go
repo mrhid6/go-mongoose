@@ -33,8 +33,13 @@ func getName(t reflect.Type) string {
 
 // GetID Returns the Object ID
 func GetID(a interface{}) primitive.ObjectID {
-	// t := reflect.TypeOf(a)
+	t := reflect.TypeOf(a)
 	tv := reflect.ValueOf(a)
+
+	if t.Kind() == reflect.Ptr {
+		tv = reflect.Indirect(tv)
+	}
+
 	mVal := tv.FieldByName("ID")
 	if reflect.Value.IsZero(mVal) {
 		return primitive.NilObjectID

@@ -22,6 +22,7 @@ func RunTest() {
 	})
 
 	tM := test.UserModel{
+		Name:  "test",
 		Email: "Something@gmail.com",
 	}
 	if _, err := mongoose.InsertOne(&tM); err != nil {
@@ -33,6 +34,8 @@ func RunTest() {
 	err := mongoose.FindOne(bson.M{
 		"name": "test",
 	}, &uM)
+
+	fmt.Printf("%v\n", mutility.GetID(uM).Hex())
 
 	if err != nil {
 		fmt.Println("Error 1 ", err)
