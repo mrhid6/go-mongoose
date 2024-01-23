@@ -52,7 +52,10 @@ func (dbConnection *DBConnection) BuildConnectionURL() {
 
 	if !dbConnection.SRV {
 		dbConnection.ConnectionURL += ":" + strconv.Itoa(dbConnection.Port)
+	}
 
+	if dbConnection.Database != "" {
+		dbConnection.ConnectionURL += "/" + dbConnection.Database
 	}
 }
 
