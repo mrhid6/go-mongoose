@@ -17,11 +17,11 @@ func TestURLNoSRV(t *testing.T) {
 	}
 	InitiateDB(dbInfo)
 	expectedURL := fmt.Sprintf("mongodb://%s:%s@%s:%d", dbInfo.User, dbInfo.Password, dbInfo.Host, defaultPort)
-	if connectionURL != expectedURL {
+	if dbInfo.ConnectionURL != expectedURL {
 		t.Errorf(`
 		expected -- %s
 		actual ---- %s
-		`, expectedURL, connectionURL)
+		`, expectedURL, dbInfo.ConnectionURL)
 		t.Fail()
 	}
 }
@@ -37,11 +37,11 @@ func TestURLSRV(t *testing.T) {
 	}
 	InitiateDB(dbInfo)
 	expectedURL := fmt.Sprintf("mongodb+srv://%s:%s@%s", dbInfo.User, dbInfo.Password, dbInfo.Host)
-	if connectionURL != expectedURL {
+	if dbInfo.ConnectionURL != expectedURL {
 		t.Errorf(`
 		expected -- %s
 		actual ---- %s
-		`, expectedURL, connectionURL)
+		`, expectedURL, dbInfo.ConnectionURL)
 		t.Fail()
 	}
 }

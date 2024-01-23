@@ -12,9 +12,10 @@ import (
 
 // Mongo This is the Mongo struct
 type Mongo struct {
-	client   *mongo.Client
-	Database *mongo.Database
-	Err      error
+	client       *mongo.Client
+	Database     *mongo.Database
+	dbConnection DBConnection
+	Err          error
 }
 
 // DBConnection DB Connection Details
@@ -25,32 +26,16 @@ type DBConnection struct {
 	User     string
 	Password string
 
-	/*
-		In addition to the standard connection format, MongoDB supports a DNS-constructed seed list. Using DNS to construct the available servers list allows more flexibility of deployment and the ability to change the servers in rotation without reconfiguring clients.
+	ConnectionURL string
 
-		In order to leverage the DNS seed list, use a connection string prefix of mongodb+srv rather than the standard mongodb. The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record. The driver or mongosh will then query the DNS for the record to determine which hosts are running the mongod instances.
-
-		https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format
-	*/
 	SRV bool
 }
 
-// ShortWaitTime Small Wait time
-// MediumWaitTime Medium Wait Time
-// LongWaitTime Long wait time
-var (
-	_mongo        Mongo
-	connectionURL string = "mongodb://localhost:27017"
-	dbName        string = "teamace"
+func (dbConnection *DBConnection) BuildConnectionURL() {
+	if dbConnection.ConnectionURL != "" {
+		return
+	}
 
-	ShortWaitTime  time.Duration = 2
-	MediumWaitTime time.Duration = 5
-	LongWaitTime   time.Duration = 10
-)
-
-// InitiateDB This needs to be called if you are using some other than default DB
-func InitiateDB(dbConnection DBConnection) {
-	// fmt.Println(dbConnection.Port)
 	if dbConnection.Port == 0 {
 		dbConnection.Port = 27017
 	}
@@ -60,31 +45,54 @@ func InitiateDB(dbConnection DBConnection) {
 	}
 
 	if dbConnection.User == "" {
-		connectionURL = urlHeader + dbConnection.Host
+		dbConnection.ConnectionURL = urlHeader + dbConnection.Host
 	} else {
-		connectionURL = urlHeader + url.QueryEscape(dbConnection.User) + ":" + url.QueryEscape(dbConnection.Password) + "@" + dbConnection.Host
+		dbConnection.ConnectionURL = urlHeader + url.QueryEscape(dbConnection.User) + ":" + url.QueryEscape(dbConnection.Password) + "@" + dbConnection.Host
 	}
 
 	if !dbConnection.SRV {
-		connectionURL += ":" + strconv.Itoa(dbConnection.Port)
+		dbConnection.ConnectionURL += ":" + strconv.Itoa(dbConnection.Port)
 
 	}
+}
 
-	if dbConnection.Database != "" {
-		dbName = dbConnection.Database
+// ShortWaitTime Small Wait time
+// MediumWaitTime Medium Wait Time
+// LongWaitTime Long wait time
+var (
+	_mongo Mongo
+
+	ShortWaitTime  time.Duration = 2
+	MediumWaitTime time.Duration = 5
+	LongWaitTime   time.Duration = 10
+)
+
+// InitiateDB This needs to be called if you are using some other than default DB
+func InitiateDB(dbConnection DBConnection) {
+	dbConnection.BuildConnectionURL()
+
+	_mongo.dbConnection = dbConnection
+}
+
+func TestConnection() error {
+
+	if _, err := Get(); err != nil {
+		return err
 	}
+
+	return nil
 }
 
 // Get This function will recieve the Mongo structure
 func Get() (Mongo, error) {
 	if _mongo.client == nil {
 		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
+		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(_mongo.dbConnection.ConnectionURL))
 		if _mongo.Err != nil {
 			return _mongo, _mongo.Err
 		}
-		
-		_mongo.Database = _mongo.client.Database(dbName)
+
+		_mongo.Database = _mongo.client.Database(_mongo.dbConnection.Database)
 	}
 	return _mongo, nil
 }
