@@ -3,9 +3,11 @@ package mongoose
 import (
 	"context"
 	"net/url"
+	"reflect"
 	"strconv"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -90,7 +92,12 @@ func TestConnection() error {
 func Get() (Mongo, error) {
 	if _mongo.client == nil {
 		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(_mongo.dbConnection.ConnectionURL))
+		tM := reflect.TypeOf(bson.M{})
+
+		reg := bson.NewRegistry()
+		reg.RegisterTypeMapEntry(bson.TypeEmbeddedDocument, tM)
+
+		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(_mongo.dbConnection.ConnectionURL).SetRegistry(reg))
 		if _mongo.Err != nil {
 			return _mongo, _mongo.Err
 		}
