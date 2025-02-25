@@ -50,3 +50,23 @@ func UpdateDataByID(model interface{}, update interface{}) error {
 	}
 	return nil
 }
+
+func UpdateModelData(model interface{}, updateData bson.M) error {
+	mongo, err := Get()
+
+	if err != nil {
+		return err
+	}
+
+	collection := mongo.Database.Collection(mutility.GetName(model))
+	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
+
+	_, err = collection.UpdateOne(ctx, bson.M{
+		"_id": mutility.GetID(model),
+	}, bson.M{"$set": updateData})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
