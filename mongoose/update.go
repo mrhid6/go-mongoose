@@ -30,6 +30,7 @@ func UpdateByID(model interface{}) error {
 	return nil
 }
 
+// Deprecated: Use UpdateModelData instead.
 func UpdateDataByID(model interface{}, update interface{}) error {
 
 	mongo, err := Get()
