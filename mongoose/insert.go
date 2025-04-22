@@ -12,6 +12,10 @@ import (
 )
 
 // InsertOne This will insert just one Data
+//
+// Parameters:
+//
+//   - modelPtr - Should be a pointer to the model e.g. &NewUser
 func InsertOne(modelPtr interface{}) (res *mongo.InsertOneResult, err error) {
 
 	if !mutility.IsPointer(modelPtr) {
@@ -38,13 +42,16 @@ func InsertOne(modelPtr interface{}) (res *mongo.InsertOneResult, err error) {
 }
 
 // InsertMany This will insert multiple Data
-// TODO Find a way to pass pointer and attach its ID to the respective array elements
-func InsertMany(models []interface{}) (res *mongo.InsertManyResult, err error) {
-	if len(models) == 0 {
+//
+// Parameters:
+//
+//   - modelsPtr - Should be a pointer to the model array e.g. &[]NewUser
+func InsertMany(modelsPtr []interface{}) (res *mongo.InsertManyResult, err error) {
+	if len(modelsPtr) == 0 {
 		return nil, errors.New("the length of Model Array is 0")
 	}
 
-	if !mutility.IsPointer(models) {
+	if !mutility.IsPointer(modelsPtr) {
 		return nil, errors.New("models should be a Pointer")
 	}
 
@@ -54,12 +61,12 @@ func InsertMany(models []interface{}) (res *mongo.InsertManyResult, err error) {
 		return nil, err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(models))
+	collection := mongo.Database.Collection(mutility.GetName(modelsPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	// iM := make([]interface{}, 0)
 	// iM = append(iM, models)
-	res, err = collection.InsertMany(ctx, models)
+	res, err = collection.InsertMany(ctx, modelsPtr)
 	if err != nil {
 		return nil, err
 	}
