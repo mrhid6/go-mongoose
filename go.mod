@@ -5,6 +5,7 @@ go 1.24
 require go.mongodb.org/mongo-driver v1.17.3
 
 require (
+	github.com/gertd/go-pluralize v0.2.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect

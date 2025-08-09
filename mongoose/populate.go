@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/mrhid6/go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,10 +14,10 @@ import (
 // PopulateObject an Object
 func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) error {
 
-	if !mutility.IsPointer(objPtr) {
+	if !utils.IsPointer(objPtr) {
 		return errors.New("populateobject - objptr should be a Pointer")
 	}
-	if !mutility.IsPointer(modelPtr) {
+	if !utils.IsPointer(modelPtr) {
 		return errors.New("populateobject - modelPtr should be a Pointer")
 	}
 
@@ -54,10 +54,10 @@ func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) 
 // PopulateObjectArray Populates the Object Array
 func PopulateObjectArray(objPtr interface{}, field string, modelArrPtr interface{}) error {
 
-	if !mutility.IsPointer(objPtr) {
+	if !utils.IsPointer(objPtr) {
 		return errors.New("populateobjectarray - objptr should be a Pointer")
 	}
-	if !mutility.IsPointer(modelArrPtr) {
+	if !utils.IsPointer(modelArrPtr) {
 		return errors.New("populateobjectarray - modelarrptr should be a Pointer")
 	}
 

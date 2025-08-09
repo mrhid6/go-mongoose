@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/mrhid6/go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/utils"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -18,7 +18,7 @@ import (
 //   - modelPtr - Should be a pointer to the model e.g. &NewUser
 func InsertOne(modelPtr interface{}) (res *mongo.InsertOneResult, err error) {
 
-	if !mutility.IsPointer(modelPtr) {
+	if !utils.IsPointer(modelPtr) {
 		return nil, errors.New("insertone - model should be a Pointer")
 	}
 
@@ -28,7 +28,7 @@ func InsertOne(modelPtr interface{}) (res *mongo.InsertOneResult, err error) {
 		return nil, err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(modelPtr))
+	collection := mongo.Database.Collection(utils.GetName(modelPtr))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	res, err = collection.InsertOne(ctx, modelPtr)
@@ -51,7 +51,7 @@ func InsertMany(modelsPtr []interface{}) (res *mongo.InsertManyResult, err error
 		return nil, errors.New("the length of Model Array is 0")
 	}
 
-	if !mutility.IsPointer(modelsPtr) {
+	if !utils.IsPointer(modelsPtr) {
 		return nil, errors.New("models should be a Pointer")
 	}
 
@@ -61,7 +61,7 @@ func InsertMany(modelsPtr []interface{}) (res *mongo.InsertManyResult, err error
 		return nil, err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(modelsPtr))
+	collection := mongo.Database.Collection(utils.GetName(modelsPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	// iM := make([]interface{}, 0)

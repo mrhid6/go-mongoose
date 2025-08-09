@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/mrhid6/go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,14 +13,14 @@ import (
 
 // FindOne Searches one object and returns its value
 func FindOne(filter bson.M, b interface{}) (err error) {
-	// fmt.Println("Collection Name : ", mutility.GetName(b))
+	// fmt.Println("Collection Name : ", utils.GetName(b))
 	mongo, err := Get()
 
 	if err != nil {
 		return err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(b))
+	collection := mongo.Database.Collection(utils.GetName(b))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	res := collection.FindOne(ctx, filter)
@@ -64,7 +64,7 @@ func FindAllWithOptions(filter bson.M, option options.FindOptions, modelsOutArra
 		return err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(modelsOutArrayPtr))
+	collection := mongo.Database.Collection(utils.GetName(modelsOutArrayPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
 	cur, err := collection.Find(ctx, filter, &option)

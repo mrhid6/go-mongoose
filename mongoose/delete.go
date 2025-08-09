@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/mrhid6/go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +18,7 @@ func DeleteOne(filter bson.M, tempCollection interface{}) (*mongo.DeleteResult, 
 		return nil, err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(tempCollection))
+	collection := mongo.Database.Collection(utils.GetName(tempCollection))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	return collection.DeleteOne(ctx, filter)
@@ -32,7 +32,7 @@ func DeleteMany(filter bson.M, tempCollection interface{}) (*mongo.DeleteResult,
 		return nil, err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(tempCollection))
+	collection := mongo.Database.Collection(utils.GetName(tempCollection))
 	ctx, _ := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 
 	return collection.DeleteMany(ctx, filter)

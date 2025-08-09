@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/mrhid6/go-mongoose/mutility"
+	"github.com/mrhid6/go-mongoose/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -17,11 +17,11 @@ func UpdateByID(model interface{}) error {
 		return err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(model))
+	collection := mongo.Database.Collection(utils.GetName(model))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	_, err = collection.ReplaceOne(ctx, bson.M{
-		"_id": mutility.GetID(model),
+		"_id": utils.GetID(model),
 	}, model)
 
 	if err != nil {
@@ -39,11 +39,11 @@ func UpdateDataByID(model interface{}, update interface{}) error {
 		return err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(model))
+	collection := mongo.Database.Collection(utils.GetName(model))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	_, err = collection.UpdateOne(ctx, bson.M{
-		"_id": mutility.GetID(model),
+		"_id": utils.GetID(model),
 	}, update)
 
 	if err != nil {
@@ -59,11 +59,11 @@ func UpdateModelData(model interface{}, updateData bson.M) error {
 		return err
 	}
 
-	collection := mongo.Database.Collection(mutility.GetName(model))
+	collection := mongo.Database.Collection(utils.GetName(model))
 	ctx, _ := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 
 	_, err = collection.UpdateOne(ctx, bson.M{
-		"_id": mutility.GetID(model),
+		"_id": utils.GetID(model),
 	}, bson.M{"$set": updateData})
 
 	if err != nil {

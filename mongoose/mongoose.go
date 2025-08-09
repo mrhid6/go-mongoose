@@ -66,10 +66,6 @@ func (dbConnection *DBConnection) BuildConnectionURL() {
 // LongWaitTime Long wait time
 var (
 	_mongo Mongo
-
-	ShortWaitTime  time.Duration = 2
-	MediumWaitTime time.Duration = 5
-	LongWaitTime   time.Duration = 10
 )
 
 // InitiateDB This needs to be called if you are using some other than default DB
