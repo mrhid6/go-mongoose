@@ -34,6 +34,8 @@ type DBConnectionOptions struct {
 	User     string
 	Password string
 
+    AuthSource *string
+
 	SRV bool
 
 	Debug bool
@@ -76,6 +78,10 @@ func (dbConnection *DBConnectionOptions) BuildConnectionURI() string {
 	if dbConnection.Database != "" {
 		resConnectionURI += "/" + dbConnection.Database
 	}
+
+    if dbConnection.AuthSource != nil{
+        resConnectionURI += fmt.Sprintf("?authSource=%s", *dbConnection.AuthSource)
+    }
 
 	return resConnectionURI
 }
