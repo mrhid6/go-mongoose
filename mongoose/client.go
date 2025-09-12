@@ -178,3 +178,11 @@ func (c *MongooseClient) GetModelByCollection(name string) (*Model, error) {
 	}
 	return nil, fmt.Errorf("no model found for collection %s", name)
 }
+
+func (c *MongooseClient) GetDatabase() *mongo.Database {
+	return c.db
+}
+
+func (c *MongooseClient) GetCollection(collectionName string) *mongo.Collection {
+	return c.db.Collection(collectionName)
+}
