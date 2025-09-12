@@ -43,6 +43,8 @@ type DBConnectionOptions struct {
 
 func GetConnectionOptionsFromEnv() *DBConnectionOptions {
 	dbPort, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+    authSource := os.Getenv("DB_AUTHSOURCE")
+
 	return &DBConnectionOptions{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     dbPort,
@@ -51,6 +53,7 @@ func GetConnectionOptionsFromEnv() *DBConnectionOptions {
 		Password: os.Getenv("DB_PASSWORD"),
 		SRV:      os.Getenv("DB_SRV") == "true",
 		Debug:    os.Getenv("DB_DEBUG") == "true",
+        AuthSource: &authSource,
 	}
 }
 
