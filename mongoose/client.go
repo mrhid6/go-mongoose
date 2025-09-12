@@ -34,7 +34,7 @@ type DBConnectionOptions struct {
 	User     string
 	Password string
 
-    AuthSource *string
+	AuthSource string
 
 	SRV bool
 
@@ -43,17 +43,16 @@ type DBConnectionOptions struct {
 
 func GetConnectionOptionsFromEnv() *DBConnectionOptions {
 	dbPort, _ := strconv.Atoi(os.Getenv("DB_PORT"))
-    authSource := os.Getenv("DB_AUTHSOURCE")
 
 	return &DBConnectionOptions{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     dbPort,
-		Database: os.Getenv("DB_DATABASE"),
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		SRV:      os.Getenv("DB_SRV") == "true",
-		Debug:    os.Getenv("DB_DEBUG") == "true",
-        AuthSource: &authSource,
+		Host:       os.Getenv("DB_HOST"),
+		Port:       dbPort,
+		Database:   os.Getenv("DB_DATABASE"),
+		User:       os.Getenv("DB_USER"),
+		Password:   os.Getenv("DB_PASSWORD"),
+		SRV:        os.Getenv("DB_SRV") == "true",
+		Debug:      os.Getenv("DB_DEBUG") == "true",
+		AuthSource: os.Getenv("DB_AUTHSOURCE"),
 	}
 }
 
@@ -82,9 +81,9 @@ func (dbConnection *DBConnectionOptions) BuildConnectionURI() string {
 		resConnectionURI += "/" + dbConnection.Database
 	}
 
-    if dbConnection.AuthSource != nil{
-        resConnectionURI += fmt.Sprintf("?authSource=%s", *dbConnection.AuthSource)
-    }
+	if dbConnection.AuthSource != "" {
+		resConnectionURI += fmt.Sprintf("?authSource=%s", dbConnection.AuthSource)
+	}
 
 	return resConnectionURI
 }
