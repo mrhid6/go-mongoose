@@ -144,8 +144,8 @@ func (m *Model) PopulateField(objPtr interface{}, fieldName string) error {
 
 	// Figure out matching ID field name
 	var idFieldName string
-	if strings.HasSuffix(fieldName, "s") { // plural -> Users -> ProductIds
-		idFieldName = strings.TrimSuffix(fieldName, "s") + "Ids"
+	if pluralizer.IsPlural(fieldName) {
+		idFieldName = pluralizer.Singular(fieldName) + "Ids"
 	} else {
 		idFieldName = fieldName + "Id"
 	}
