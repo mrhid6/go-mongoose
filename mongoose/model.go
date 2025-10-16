@@ -191,8 +191,10 @@ func (m *Model) PopulateField(objPtr interface{}, fieldName string) error {
 		}
 
 		resultsPtr := reflect.New(destField.Type).Interface()
-		if err := targetModel.FindAll(resultsPtr, bson.M{"_id": bson.M{"$in": ids}}); err != nil {
-			return err
+		if len(ids) > 0 {
+			if err := targetModel.FindAll(resultsPtr, bson.M{"_id": bson.M{"$in": ids}}); err != nil {
+				return err
+			}
 		}
 
 		val.FieldByName(fieldName).Set(reflect.ValueOf(resultsPtr).Elem())
