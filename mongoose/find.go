@@ -2,6 +2,7 @@ package mongoose
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/mrhid6/go-mongoose/utils"
@@ -89,4 +90,22 @@ func FindAllWithPagination(filter bson.M, start int64, count int64, modelsOutArr
 		Skip:  &start,
 		Limit: &count,
 	}, modelsOutArrayPtr)
+}
+
+func CountDocuments(collectionName string, filter bson.M) (int64, error) {
+	mongo, err := Get()
+
+	if err != nil {
+		return 0, err
+	}
+
+	collection := mongo.Database.Collection(collectionName)
+	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
+
+	total, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count mods: %w", err)
+	}
+
+	return total, nil
 }
