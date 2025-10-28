@@ -130,6 +130,22 @@ func (m *Model) UpdateData(doc interface{}, updateData bson.M) error {
 	return nil
 }
 
+func (m *Model) RawUpdateData(doc interface{}, updateData bson.M) error {
+
+	col := m.client.db.Collection(m.CollectionName)
+	ctx, cancel := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
+	defer cancel()
+
+	_, err := col.UpdateOne(ctx, bson.M{
+		"_id": utils.GetID(doc),
+	}, updateData)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Model) PopulateField(objPtr interface{}, fieldName string) error {
 	val := reflect.ValueOf(objPtr)
 	if val.Kind() != reflect.Ptr {
