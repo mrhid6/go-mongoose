@@ -67,7 +67,7 @@ func (m *Model) FindOneAndUpdate(result interface{}, filter bson.M, update bson.
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	col := m.client.db.Collection(m.CollectionName)
-	err := col.FindOneAndUpdate(ctx, filter, update, opts).Decode(&result)
+	err := col.FindOneAndUpdate(ctx, filter, update, opts).Decode(result)
 	if err != nil {
 		return err
 	}
