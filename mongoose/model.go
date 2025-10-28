@@ -60,6 +60,20 @@ func (m *Model) FindOneById(result interface{}, id primitive.ObjectID) error {
 	return col.FindOne(ctx, bson.M{"_id": id}).Decode(result)
 }
 
+func (m *Model) FindOneAndUpdate(result interface{}, filter bson.M, update bson.M) error {
+	ctx, cancel := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
+	defer cancel()
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	col := m.client.db.Collection(m.CollectionName)
+	err := col.FindOneAndUpdate(ctx, filter, update, opts).Decode(&result)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Model) Create(doc interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), ShortWaitTime*time.Second)
 	defer cancel()
