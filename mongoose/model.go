@@ -9,9 +9,8 @@ import (
 	"time"
 
 	"github.com/mrhid6/go-mongoose/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var (
@@ -27,15 +26,15 @@ type Model struct {
 }
 
 func (m *Model) FindAll(results interface{}, filter bson.M) error {
-	return m.FindAllWithOptions(results, filter, &options.FindOptions{})
+	return m.FindAllWithOptions(results, filter, options.Find())
 }
 
-func (m *Model) FindAllWithOptions(results interface{}, filter bson.M, options *options.FindOptions) error {
+func (m *Model) FindAllWithOptions(results interface{}, filter bson.M, opts *options.FindOptionsBuilder) error {
 	ctx, cancel := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 	defer cancel()
 
 	col := m.client.db.Collection(m.CollectionName)
-	cursor, err := col.Find(ctx, filter, options)
+	cursor, err := col.Find(ctx, filter, opts)
 	if err != nil {
 		return err
 	}
@@ -52,7 +51,7 @@ func (m *Model) FindOne(result interface{}, filter bson.M) error {
 	return col.FindOne(ctx, filter).Decode(result)
 }
 
-func (m *Model) FindOneById(result interface{}, id primitive.ObjectID) error {
+func (m *Model) FindOneById(result interface{}, id bson.ObjectID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 	defer cancel()
 
@@ -91,7 +90,7 @@ func (m *Model) Delete(filter bson.M) error {
 	return err
 }
 
-func (m *Model) DeleteById(id primitive.ObjectID) error {
+func (m *Model) DeleteById(id bson.ObjectID) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), MediumWaitTime*time.Second)
 	defer cancel()
@@ -211,11 +210,11 @@ func (m *Model) PopulateField(objPtr interface{}, fieldName string) error {
 	idFieldVal := val.FieldByName(idFieldName)
 	idFieldType := idFieldVal.Type()
 
-	// ---- CASE 1: primitive.A ----
-	if idFieldType == reflect.TypeOf(primitive.A{}) {
-		var ids []primitive.ObjectID
-		for _, v := range idFieldVal.Interface().(primitive.A) {
-			if oid, ok := v.(primitive.ObjectID); ok {
+	// ---- CASE 1: bson.A ----
+	if idFieldType == reflect.TypeOf(bson.A{}) {
+		var ids []bson.ObjectID
+		for _, v := range idFieldVal.Interface().(bson.A) {
+			if oid, ok := v.(bson.ObjectID); ok {
 				ids = append(ids, oid)
 			}
 		}
@@ -232,8 +231,8 @@ func (m *Model) PopulateField(objPtr interface{}, fieldName string) error {
 	}
 
 	// ---- CASE 2: Single ObjectID ----
-	if idFieldType == reflect.TypeOf(primitive.ObjectID{}) {
-		objID, _ := idFieldVal.Interface().(primitive.ObjectID)
+	if idFieldType == reflect.TypeOf(bson.ObjectID{}) {
+		objID, _ := idFieldVal.Interface().(bson.ObjectID)
 		targetInstance := reflect.New(targetModel.SchemaType).Interface()
 		if err := targetModel.FindOne(targetInstance, bson.M{"_id": objID}); err != nil {
 			return err

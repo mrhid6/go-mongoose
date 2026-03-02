@@ -11,9 +11,9 @@ import (
 	"strings"
 	"sync"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	pluralize "github.com/gertd/go-pluralize"
 )
@@ -97,8 +97,12 @@ func NewMongoClient(ctx context.Context, connectionOptions *DBConnectionOptions)
 	reg := bson.NewRegistry()
 	reg.RegisterTypeMapEntry(bson.TypeEmbeddedDocument, tM)
 
-	clientOpts := options.Client().ApplyURI(uri).SetRegistry(reg)
-	client, err := mongo.Connect(ctx, clientOpts)
+	clientOpts := options.Client().ApplyURI(uri).SetRegistry(reg).SetAuth(options.Credential{
+		Username:   connectionOptions.User,
+		Password:   connectionOptions.Password,
+		AuthSource: connectionOptions.AuthSource,
+	})
+	client, err := mongo.Connect(clientOpts)
 	if err != nil {
 		return nil, err
 	}

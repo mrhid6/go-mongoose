@@ -5,8 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var (
@@ -14,18 +13,18 @@ var (
 )
 
 type UserSchema struct {
-	ID       primitive.ObjectID `bson:"_id"`
-	Username string             `bson:"username"`
-	Password string             `bson:"password"`
+	ID       bson.ObjectID `bson:"_id"`
+	Username string        `bson:"username"`
+	Password string        `bson:"password"`
 }
 
 type AccountSchema struct {
-	ID           primitive.ObjectID `bson:"_id"`
-	OwningUserId primitive.ObjectID `bson:"owningUser" mson:"collection=users"`
-	OwningUser   UserSchema         `bson:"-"`
+	ID           bson.ObjectID `bson:"_id"`
+	OwningUserId bson.ObjectID `bson:"owningUser" mson:"collection=users"`
+	OwningUser   UserSchema    `bson:"-"`
 
 	Users   []UserSchema `bson:"-"`
-	UserIds primitive.A  `bson:"users" mson:"collection=users"`
+	UserIds bson.A       `bson:"users" mson:"collection=users"`
 }
 
 func TestClient(t *testing.T) {
@@ -78,7 +77,7 @@ func TestClientModels(t *testing.T) {
 	}
 
 	NewUser := &UserSchema{
-		ID:       primitive.NewObjectID(),
+		ID:       bson.NewObjectID(),
 		Username: "test",
 		Password: "Hello",
 	}
@@ -89,11 +88,11 @@ func TestClientModels(t *testing.T) {
 		return
 	}
 
-	userIds := make(primitive.A, 0)
+	userIds := make(bson.A, 0)
 	userIds = append(userIds, NewUser.ID)
 
 	NewAccount := &AccountSchema{
-		ID:           primitive.NewObjectID(),
+		ID:           bson.NewObjectID(),
 		OwningUserId: NewUser.ID,
 		UserIds:      userIds,
 	}

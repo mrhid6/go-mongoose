@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func IsPointer(a interface{}) bool {
@@ -32,7 +32,7 @@ func getName(t reflect.Type) string {
 }
 
 // GetID Returns the Object ID
-func GetID(a interface{}) primitive.ObjectID {
+func GetID(a interface{}) bson.ObjectID {
 	t := reflect.TypeOf(a)
 	v := reflect.ValueOf(a)
 
@@ -43,7 +43,7 @@ func GetID(a interface{}) primitive.ObjectID {
 
 	if t.Kind() != reflect.Struct {
 		// Not a struct, return NilObjectID
-		return primitive.NilObjectID
+		return bson.NilObjectID
 	}
 
 	// Iterate struct fields to find the one with bson:"_id"
@@ -57,22 +57,22 @@ func GetID(a interface{}) primitive.ObjectID {
 			fieldValue := v.Field(i)
 			// Check zero
 			if fieldValue.IsZero() {
-				return primitive.NilObjectID
+				return bson.NilObjectID
 			}
 
-			// Make sure the type is primitive.ObjectID before casting
-			if oid, ok := fieldValue.Interface().(primitive.ObjectID); ok {
+			// Make sure the type is bson.ObjectID before casting
+			if oid, ok := fieldValue.Interface().(bson.ObjectID); ok {
 				return oid
 			}
 
 			// If not an ObjectID, try to convert from string if needed (optional)
 			// or return NilObjectID
-			return primitive.NilObjectID
+			return bson.NilObjectID
 		}
 	}
 
 	// Not found, return NilObjectID
-	return primitive.NilObjectID
+	return bson.NilObjectID
 }
 
 func GetValidBsonFields(t reflect.Type) map[string]struct{} {

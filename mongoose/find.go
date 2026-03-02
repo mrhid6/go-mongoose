@@ -7,9 +7,8 @@ import (
 
 	"github.com/mrhid6/go-mongoose/utils"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // FindOne Searches one object and returns its value
@@ -40,7 +39,7 @@ func FindOne(filter bson.M, b interface{}) (err error) {
 // FindByID Searches by ID
 func FindByID(id string, b interface{}) (err error) {
 
-	objectID, err := primitive.ObjectIDFromHex(id)
+	objectID, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
@@ -51,14 +50,14 @@ func FindByID(id string, b interface{}) (err error) {
 }
 
 // FindByObjectID Searches by Object ID
-func FindByObjectID(objectID primitive.ObjectID, b interface{}) (err error) {
+func FindByObjectID(objectID bson.ObjectID, b interface{}) (err error) {
 	return FindOne(bson.M{
 		"_id": objectID,
 	}, b)
 }
 
 // FindAllWithOptions Find all with options
-func FindAllWithOptions(filter bson.M, option options.FindOptions, modelsOutArrayPtr interface{}) error {
+func FindAllWithOptions(filter bson.M, option *options.FindOptionsBuilder, modelsOutArrayPtr interface{}) error {
 	mongo, err := Get()
 
 	if err != nil {
@@ -68,7 +67,7 @@ func FindAllWithOptions(filter bson.M, option options.FindOptions, modelsOutArra
 	collection := mongo.Database.Collection(utils.GetName(modelsOutArrayPtr))
 	ctx, _ := context.WithTimeout(context.Background(), LongWaitTime*time.Second)
 
-	cur, err := collection.Find(ctx, filter, &option)
+	cur, err := collection.Find(ctx, filter, option)
 	if err != nil {
 		return err
 	}
@@ -81,15 +80,15 @@ func FindAllWithOptions(filter bson.M, option options.FindOptions, modelsOutArra
 
 // FindAll Get All Docs
 func FindAll(filter bson.M, modelsOutArrayPtr interface{}) error {
-	return FindAllWithOptions(filter, options.FindOptions{}, modelsOutArrayPtr)
+	return FindAllWithOptions(filter, options.Find(), modelsOutArrayPtr)
 }
 
 // FindAllWithPagination Get All Docs with Pagination
 func FindAllWithPagination(filter bson.M, start int64, count int64, modelsOutArrayPtr interface{}) error {
-	return FindAllWithOptions(filter, options.FindOptions{
-		Skip:  &start,
-		Limit: &count,
-	}, modelsOutArrayPtr)
+
+	opts := options.Find().SetSkip(start).SetLimit(count)
+
+	return FindAllWithOptions(filter, opts, modelsOutArrayPtr)
 }
 
 func CountDocuments(collectionName string, filter bson.M) (int64, error) {

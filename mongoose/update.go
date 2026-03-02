@@ -6,7 +6,7 @@ import (
 
 	"github.com/mrhid6/go-mongoose/utils"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // UpdateByID Updates by ID

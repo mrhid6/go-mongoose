@@ -7,8 +7,7 @@ import (
 	"strings"
 
 	"github.com/mrhid6/go-mongoose/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // PopulateObject an Object
@@ -40,7 +39,7 @@ func PopulateObject(objPtr interface{}, fieldName string, modelPtr interface{}) 
 			return nil
 		}
 
-		t1 := val.Interface().(primitive.ObjectID)
+		t1 := val.Interface().(bson.ObjectID)
 
 		err := FindByObjectID(t1, modelPtr)
 		if err != nil {
@@ -81,7 +80,7 @@ func PopulateObjectArray(objPtr interface{}, field string, modelArrPtr interface
 			continue
 		}
 
-		objIds := val.Interface().(primitive.A)
+		objIds := val.Interface().(bson.A)
 		err := FindAll(bson.M{
 			"_id": bson.M{
 				"$in": objIds,

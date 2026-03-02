@@ -1,15 +1,13 @@
 package mongoose
 
 import (
-	"context"
 	"net/url"
 	"reflect"
 	"strconv"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // Mongo This is the Mongo struct
@@ -87,13 +85,12 @@ func TestConnection() error {
 // Get This function will recieve the Mongo structure
 func Get() (Mongo, error) {
 	if _mongo.client == nil {
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 		tM := reflect.TypeOf(bson.M{})
 
 		reg := bson.NewRegistry()
 		reg.RegisterTypeMapEntry(bson.TypeEmbeddedDocument, tM)
 
-		_mongo.client, _mongo.Err = mongo.Connect(ctx, options.Client().ApplyURI(_mongo.dbConnection.ConnectionURL).SetRegistry(reg))
+		_mongo.client, _mongo.Err = mongo.Connect(options.Client().ApplyURI(_mongo.dbConnection.ConnectionURL).SetRegistry(reg))
 		if _mongo.Err != nil {
 			return _mongo, _mongo.Err
 		}
